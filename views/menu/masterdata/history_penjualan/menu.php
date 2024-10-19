@@ -1,0 +1,963 @@
+<div class="modal-header" style="padding: 5px;">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-5">
+                <h2>
+                    <span class="logo-menu"><i class="links_icon fas fa-file-chart-line" style="font-size: 22px;"></i></span>
+                    <span class="text-uppercase">HISTORY AR</span>
+                </h2>
+            </div>
+            <div class="col-md-7">
+                <div class="form-group" style="float: right;">
+                    <button id="query_data" class="btn btn-success mb-1 mt-1 mr-1 ml-1" style="margin-bottom: 0px;"><i class="far fa-save" style="margin-right: 10px;"></i>Query Data</button>
+                    <button id="new" class="btn btn-success mb-1 mt-1 mr-1 ml-1" style="margin-bottom: 0px;"><i class="fa fa-refresh" style="margin-right: 10px;"></i>New</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="separator-breadcrumb border-top"></div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="card-title mb-3"></div>
+                <div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group row">
+                                <label class="col-sm-3 form-label" for="jenisfaktur">Jenis Faktur</label>
+                                <input class="form-control" type="hidden" name="scabang" id="scabang" value="<?php echo $this->session->userdata('mycabang') ?>" readonly required />
+                                <input class="form-control" type="hidden" name="kodesubcabang" id="kodesubcabang" value="<?php echo $this->session->userdata('mysubcabang') ?>" readonly required />
+                                <input class="form-control" type="hidden" name="kodecompany" id="kodecompany" value="<?php echo $this->session->userdata('mycompany') ?>" readonly required />
+                                <input class="form-control" type="hidden" name="kodegrupcabang" id="kodegrupcabang" value="<?php echo $this->session->userdata('mygrupcabang') ?>" readonly required />
+                                <div class="col-md-8 form-group">
+                                    <select name="jenisfaktur" class="form-control" id="jenisfaktur">
+                                        <option value="-">-- Pilih Jenis Faktur --</option>
+                                        <option value="0">GENERAL REPAIR</option>
+                                        <option value="1">PART COUNTER</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group row">
+                                <label class="col-sm-3 form-label" for="jenispencairan">Jenis Pencairan</label>
+                                <div class="col-md-8 form-group">
+                                    <select name="jenispencairan" class="form-control" id="jenispencairan">
+                                        <option value="-">-- Pilih Jenis Pencairan --</option>
+                                        <option value="0">NOMOR FAKTUR</option>
+                                        <option value="1">NOMOR ORDER</option>
+                                        <option value="2">NAMA CUSTOMER</option>
+                                        <option value="3">NOMOR POLISI</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label" for="pencairan">Pencairan</label>
+                                <div class="col-md-7 form-group">
+                                    <input class="form-control" type="text" name="pencairan" id="pencairan" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" style="margin-top: 10px;">
+                        <div class="col-md-12">
+                            <div class="form-group row">
+                                <div class="modal-body pre-scrollable" style="height: 550px; border: 1px solid; border-color: #DCDCDC;">
+                                    <div class="table-responsive">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" style="color: black; font-weight: bold;">DATA LIST TRANSAKSI</h5>
+                                        </div>
+                                        <table class="table table-bordered table-striped" id="detailhistoryar">
+                                            <thead>
+                                                <tr>
+                                                    <th>Nomor Faktur</th>
+                                                    <th>Tanggal Faktur</th>
+                                                    <th>Nomor Order</th>
+                                                    <th>No Polisi</th>
+                                                    <th>Nama Customer</th>
+                                                    <th>Status Invoice</th>
+                                                    <th style="text-align: center;">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="detaildatahistoryar"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- DETAIL HISTORY AR -->
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" id="finddetailhistoryar">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" style="color: black;">DETAIL HISTORY AR</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <!-- <div class="modal-body pre-scrollable"> -->
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12">
+                            <ul class="nav nav-tabs nav-justified" id="myTabx" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" id="summary-basic-tab" data-toggle="tab" href="#summary" role="tab" aria-controls="summary" aria-selected="true">SUMMARY</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="jasa-basic-tab" data-toggle="tab" href="#jasa" role="tab" aria-controls="jasa" aria-selected="false">JASA</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="history-sparepart-basic-tab" data-toggle="tab" href="#history-sparepart" role="tab" aria-controls="history-sparepart" aria-selected="false">SPAREPART</a>
+                                </li>
+                                <!-- <li class="nav-item">
+                                    <a class="nav-link" id="history-bahan-basic-tab" data-toggle="tab" href="#history-bahan" role="tab" aria-controls="history-bahan" aria-selected="false">BAHAN</a>
+                                </li> -->
+                                <li class="nav-item">
+                                    <a class="nav-link" id="opl-basic-tab" data-toggle="tab" href="#opl" role="tab" aria-controls="opl" aria-selected="false">OPL</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="kasir-basic-tab" data-toggle="tab" href="#kasir" role="tab" aria-controls="kasir" aria-selected="false">KASIR</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="history-basic-tab" data-toggle="tab" href="#history" role="tab" aria-controls="history" aria-selected="false">HISTORY</a>
+                                </li>
+                            </ul>
+
+                            <div class="tab-content" id="myTabContent">
+                                <!-- SUMMARY -->
+                                <div class="tab-pane fade show active" id="summary" role="tabpanel" aria-labelledby="summary-basic-tab">
+                                    <div class="row">
+                                        <div class="col-12 col-lg-8 ">
+                                            <div class="form-group">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div class="form-group border px-1 py-1">
+                                                            <label class="form-label" for="totalsparepart">Data Faktur</label>
+                                                            <div class="row">
+                                                                <div class="col-md-7">
+                                                                    <div class="form-group row">
+                                                                        <label class="col-sm-3 col-form-label" for="nowo">No WO</label>
+                                                                        <div class="col-md-9 form-group">
+                                                                            <input class="form-control" type="text" name="nowo" id="nowo" placeholder="No WO" readonly required>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-5">
+                                                                    <div class="form-group row">
+                                                                        <label class="col-sm-3 col-form-label" for="tglwo">Tgl WO</label>
+                                                                        <div class="col-md-8">
+                                                                            <input class="form-control" type="text" name="tglwo" id="tglwo" readonly required>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-7">
+                                                                    <div class="form-group row">
+                                                                        <label class="col-sm-3 col-form-label" for="nofaktur">No Faktur</label>
+                                                                        <div class="col-md-9 form-group">
+                                                                            <input class="form-control" type="text" name="nofaktur" id="nofaktur" placeholder="No Faktur" readonly required>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-5">
+                                                                    <div class="form-group row">
+                                                                        <label class="col-sm-3 col-form-label" for="tglfaktur">Tgl Faktur</label>
+                                                                        <div class="col-md-8">
+                                                                            <input class="form-control" type="text" name="tglfaktur" id="tglfaktur" readonly required>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-7">
+                                                                    <div class="form-group row">
+                                                                        <label class="col-sm-3 col-form-label" for="namasa">Nama SA</label>
+                                                                        <div class="col-md-9 form-group">
+                                                                            <input class="form-control" type="text" name="namasa" id="namasa" placeholder="Nama SA" readonly required>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-5">
+                                                                    <div class="form-group row">
+                                                                        <label class="col-sm-3 col-form-label" for="tglpass">PM</label>
+                                                                        <div class="col-md-8">
+                                                                            <input class="form-control" type="text" name="projectmanager" id="projectmanager" readonly required>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <!-- <div class="row">
+                                                                <div class="col-md-7">
+                                                                    <div class="form-group row">
+                                                                        <label class="col-sm-3 col-form-label" for="nofakturpajak">No Faktur Pajak</label>
+                                                                        <div class="col-md-9 form-group">
+                                                                            <input class="form-control" type="text" name="nofakturpajak" id="nofakturpajak" placeholder="No Faktur Pajak" readonly required>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-5">
+                                                                    <div class="form-group row">
+                                                                        <label class="col-sm-3 col-form-label" for="tglfakturpajak">Tgl Fak. Pajak</label>
+                                                                        <div class="col-md-8">
+                                                                            <input class="form-control" type="text" name="tglfakturpajak" id="tglfakturpajak" readonly required>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div> -->
+                                                        </div>
+
+                                                        <div class="form-group border px-1 py-1">
+                                                            <label class="form-label" for="totalsparepart">Data Kendaraan</label>
+                                                            <div class="row">
+                                                                <div class="col-md-7">
+                                                                    <div class="form-group row">
+                                                                        <label class="col-sm-3 col-form-label" for="nopolisi">No Polisi</label>
+                                                                        <div class="col-md-9 form-group">
+                                                                            <input class="form-control" type="text" name="nopolisi" id="nopolisi" placeholder="No Polisi" readonly required>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-5">
+                                                                    <div class="form-group row">
+                                                                        <label class="col-sm-5 col-form-label" for="tahunpembuatan">Tahun</label>
+                                                                        <div class="col-md-6">
+                                                                            <input class="form-control" type="text" name="tahunpembuatan" id="tahunpembuatan" placeholder="Tahun" readonly required>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-7">
+                                                                    <div class="form-group row">
+                                                                        <label class="col-sm-3 col-form-label" for="norangka">No Rangka</label>
+                                                                        <div class="col-md-9 form-group">
+                                                                            <input class="form-control" type="text" name="norangka" id="norangka" placeholder="No Rangka" readonly required>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-5">
+                                                                    <div class="form-group row">
+                                                                        <label class="col-sm-5 col-form-label" for="transmisi">Transmisi</label>
+                                                                        <div class="col-md-6">
+                                                                            <input class="form-control" type="text" name="transmisi" id="transmisi" placeholder="Transmisi" readonly required>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-7">
+                                                                    <div class="form-group row">
+                                                                        <label class="col-sm-3 col-form-label" for="nomesin">No Mesin</label>
+                                                                        <div class="col-md-9 form-group">
+                                                                            <input class="form-control" type="text" name="nomesin" id="nomesin" placeholder="No Mesin" readonly required>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-5">
+                                                                    <div class="form-group row">
+                                                                        <label class="col-sm-5 col-form-label" for="odometer">KM Akhir</label>
+                                                                        <div class="col-md-6">
+                                                                            <input class="form-control" type="text" name="odometer" id="odometer" placeholder="KM Akhir" readonly required>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-12">
+                                                                    <div class="form-group row">
+                                                                        <label class="col-sm-2 col-form-label" for="tipekendaraan">Tipe Kendaraan</label>
+                                                                        <div class="col-md-10 form-group">
+                                                                            <input class="form-control" type="text" name="nama_tipe" id="nama_tipe" placeholder="Nama Tipe" readonly required>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-12">
+                                                                    <div class="form-group row">
+                                                                        <label class="col-sm-2 col-form-label" for="warnakendaraan">Warna Kendaraan</label>
+                                                                        <div class="col-md-4 form-group">
+                                                                            <input class="form-control" type="text" name="kode_warna" id="kode_warna" placeholder="Kode Warna" readonly required>
+                                                                        </div>
+                                                                        <div class="col-md-6 form-group">
+                                                                            <input class="form-control" type="text" name="nama_warna" id="nama_warna" placeholder="Nama Warna" readonly required>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group border px-1 py-1">
+                                                            <label class="form-label" for="totalsparepart">Data Customer</label>
+                                                            <div class="row">
+                                                                <div class="col-md-12">
+                                                                    <div class="form-group row">
+                                                                        <label class="col-sm-2 col-form-label" for="customer">Nama Customer</label>
+                                                                        <div class="col-md-4 form-group">
+                                                                            <input class="form-control" type="text" name="nocustomer" id="nocustomer" placeholder="Nomor Customer" readonly required>
+                                                                        </div>
+                                                                        <div class="col-md-6 form-group">
+                                                                            <input class="form-control" type="text" name="nama_customer" id="nama_customer" placeholder="Nama Customer" readonly required>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-12">
+                                                                    <div class="form-group row">
+                                                                        <label class="col-sm-2 col-form-label" for="alamatcustomer">Alamat Customer</label>
+                                                                        <div class="col-md-10 form-group">
+                                                                            <input class="form-control" type="text" name="alamat_customer" id="alamat_customer" placeholder="Alamat Customer" readonly required>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-12">
+                                                                    <div class="form-group row">
+                                                                        <label class="col-sm-2 col-form-label" for="kelutahancustomer">Kel/Kec Cust.</label>
+                                                                        <div class="col-md-5 form-group">
+                                                                            <input class="form-control" type="text" name="kelurahan_customer" id="kelurahan_customer" placeholder="Kelurahan Customer" readonly required>
+                                                                        </div>
+                                                                        <div class="col-md-5 form-group">
+                                                                            <input class="form-control" type="text" name="kecamatan_customer" id="kecamatan_customer" placeholder="Kecamatan Customer" readonly required>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-12">
+                                                                    <div class="form-group row">
+                                                                        <label class="col-sm-2 col-form-label" for="kotacustomer">Kota Customer</label>
+                                                                        <div class="col-md-6 form-group">
+                                                                            <input class="form-control" type="text" name="kota_customer" id="kota_customer" placeholder="Kota Customer" readonly required>
+                                                                        </div>
+                                                                        <div class="col-md-4 form-group">
+                                                                            <input class="form-control" type="text" name="kodepos_customer" id="kodepos_customer" placeholder="Kode Pos Customer" readonly required>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-12">
+                                                                    <div class="form-group row">
+                                                                        <label class="col-sm-2 col-form-label" for="npwp">NPWP</label>
+                                                                        <div class="col-md-10 form-group">
+                                                                            <input class="form-control" type="text" name="npwp" id="npwp" placeholder="NPWP" readonly required>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-12">
+                                                                    <div class="form-group row">
+                                                                        <label class="col-sm-2 col-form-label" for="nohp">No HP</label>
+                                                                        <div class="col-md-10 form-group">
+                                                                            <input class="form-control" type="text" name="nohp" id="nohp" placeholder="No HP" readonly required>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12 col-lg-4">
+                                            <div class="form-group border px-1 py-1">
+                                                <label class="form-label" for="totalsparepart">Data AR</label>
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-4 col-form-label" for="totaljasa">Total Jasa</label>
+                                                            <div class="col-sm-8 form-group">
+                                                                <input class="form-control" type="text" name="totaljasa" id="totaljasa" placeholder="Total Jasa" style="text-align:right" readonly="" required="">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-4 col-form-label" for="totalsparepart">Total Part</label>
+                                                            <div class="col-sm-8 form-group">
+                                                                <input class="form-control" type="text" name="totalsparepart" id="totalsparepart" placeholder="Total Part" style="text-align:right" readonly="" required="">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <hr class="my-1">
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-4 col-form-label" for="subtotal" style="font-weight: bold;">Subtotal</label>
+                                                            <div class="col-sm-8 form-group">
+                                                                <input class="form-control" type="text" name="subtotal" id="subtotal" placeholder="Subtotal" style="text-align:right; font-weight: bold;" readonly="" required="">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <hr class="my-1">
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-4 col-form-label" for="dpp">DPP</label>
+                                                            <div class="col-sm-8 form-group">
+                                                                <input class="form-control" type="text" name="dpp" id="dpp" placeholder="DPP" style="text-align:right" readonly="" required="">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-4 col-form-label" for="ppn">PPN</label>
+                                                            <div class="col-sm-8 form-group">
+                                                                <input class="form-control" type="text" name="ppn" id="ppn" placeholder="PPN" style="text-align:right" readonly="" required="">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <hr class="my-1">
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-4 col-form-label" for="grandtotal" style="font-weight: bold;">Grandtotal</label>
+                                                            <div class="col-sm-8 form-group">
+                                                                <input class="form-control" type="text" name="grandtotal" id="grandtotal" placeholder="Grandtotal" style="text-align:right; font-weight: bold;" readonly="" required="">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-12">
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-4 col-form-label">&nbsp;</label>
+                                                            <div class="col-sm-8 form-group">
+                                                                <input class="form-control" type="hidden" readonly="" required="">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-12">
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-4 col-form-label" for="uangmuka">Uang Muka</label>
+                                                            <div class="col-sm-8 form-group">
+                                                                <input class="form-control" type="text" name="uangmuka" id="uangmuka" placeholder="Uang Muka" style="text-align:right" readonly="" required="">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-4 col-form-label" for="pelunasan">Pelunasan</label>
+                                                            <div class="col-sm-8 form-group">
+                                                                <input class="form-control" type="text" name="pelunasan" id="pelunasan" placeholder="Pelunasan" style="text-align:right" readonly="" required="">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-4 col-form-label" for="pencairanar">Pencairan AR</label>
+                                                            <div class="col-sm-8 form-group">
+                                                                <input class="form-control" type="text" name="pencairanar" id="pencairanar" placeholder="Pencairan AR" style="text-align:right" readonly="" required="">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <hr class="my-1">
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-4 col-form-label" for="sisaar" style="font-weight: bold;">Sisa AR</label>
+                                                            <div class="col-sm-8 form-group">
+                                                                <input class="form-control" type="text" name="sisaar" id="sisaar" placeholder="Sisa AR" style="text-align:right; font-weight: bold;" readonly="" required="">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- JASA DETAIL -->
+                                <div class="tab-pane fade" id="jasa" role="tabpanel" aria-labelledby="jasa-basic-tab">
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group row">
+                                                    <div class="modal-body pre-scrollable" style="height: 500px; border: 1px solid; border-color: #DCDCDC;">
+                                                        <div class="table-responsive">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" style="color: black; font-weight: bold;">DETAIL JASA</h5>
+                                                            </div>
+                                                            <table class="table table-bordered table-striped" id="detailjasa">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>KODE TASK LIST</th>
+                                                                        <th>DESKRIPSI TASK LIST</th>
+                                                                        <th>JAM</th>
+                                                                        <th style="text-align: right;">FRT</th>
+                                                                        <th>PERSEN DISC</th>
+                                                                        <th>DISC /ITEM</th>
+                                                                        <th style="text-align: right;">SUBTOTAL</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody id="detaildatajasa"></tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6"></div>
+                                            <div class="col-md-6">
+                                                <div class="form-group row">
+                                                    <label class="col-sm-4 col-form-label" for="totaldetailjasa" style="font-weight: bold;">Total</label>
+                                                    <div class="col-sm-8 form-group">
+                                                        <input class="form-control" type="text" name="totaldetailjasa" id="totaldetailjasa" placeholder="Total" style="text-align:right; font-weight: bold;" readonly="" required="">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- SPAREPART DETAIL -->
+                                <div class="tab-pane fade" id="history-sparepart" role="tabpanel" aria-labelledby="history-sparepart-basic-tab">
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group row">
+                                                    <div class="modal-body pre-scrollable" style="height: 250px; border: 1px solid; border-color: #DCDCDC;">
+                                                        <div class="table-responsive">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" style="color: black; font-weight: bold;">DETAIL SPAREPART</h5>
+                                                            </div>
+                                                            <table class="table table-bordered table-striped" id="detailsparepart">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>KODE SPAREPART</th>
+                                                                        <th>NAMA SPAREPART</th>
+                                                                        <th>QTY</th>
+                                                                        <th>HARGA SATUAN</th>
+                                                                        <th>DISC %</th>
+                                                                        <th>DISCOUNT Rp</th>
+                                                                        <th>SUBTOTAL</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody id="detaildatasparepart"></tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6"></div>
+                                            <div class="col-md-6">
+                                                <div class="form-group row">
+                                                    <label class="col-sm-4 col-form-label" for="totaldetailsparepart" style="font-weight: bold;">Total</label>
+                                                    <div class="col-sm-8 form-group">
+                                                        <input class="form-control" type="text" name="totaldetailsparepart" id="totaldetailsparepart" placeholder="Total" style="text-align:right; font-weight: bold;" readonly="" required="">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group row">
+                                                    <div class="modal-body pre-scrollable" style="height: 250px; border: 1px solid; border-color: #DCDCDC;">
+                                                        <div class="table-responsive">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" style="color: black; font-weight: bold;">HISTORY PEMBEBANAN SPAREPART</h5>
+                                                            </div>
+                                                            <table class="table table-bordered table-striped" id="detailpembebananpart">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>NO PEMBEBANAN</th>
+                                                                        <th>TGL PEMBEBANAN</th>
+                                                                        <th>Kode SPAREPART</th>
+                                                                        <th>NAMA SPAREPART</th>
+                                                                        <th>QTY</th>
+                                                                        <th>HARGA SATUAN</th>
+                                                                        <th>SUBTOTAL</th>
+                                                                        <th>STATUS BATAL</th>
+                                                                        <th>USER</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody id="detaildatapembebananpart"></tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6"></div>
+                                            <div class="col-md-6">
+                                                <div class="form-group row">
+                                                    <label class="col-sm-4 col-form-label" for="totaldetailpembebananpart" style="font-weight: bold;">Total</label>
+                                                    <div class="col-sm-8 form-group">
+                                                        <input class="form-control" type="text" name="totaldetailpembebananpart" id="totaldetailpembebananpart" placeholder="Total" style="text-align:right; font-weight: bold;" readonly="" required="">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- BAHAN DETAIL -->
+                                <!-- <div class="tab-pane fade" id="history-bahan" role="tabpanel" aria-labelledby="history-bahan-basic-tab">
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group row">
+                                                    <div class="modal-body pre-scrollable" style="height: 250px; border: 1px solid; border-color: #DCDCDC;">
+                                                        <div class="table-responsive">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" style="color: black; font-weight: bold;">DETAIL BAHAN</h5>
+                                                            </div>
+                                                            <table class="table table-bordered table-striped" id="detailbahan">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>KODE BAHAN</th>
+                                                                        <th>NAMA BAHAN</th>
+                                                                        <th>QTY</th>
+                                                                        <th>HARGA SATUAN</th>
+                                                                        <th>DISC %</th>
+                                                                        <th>DISCOUNT Rp</th>
+                                                                        <th>SUBTOTAL</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody id="detaildatabahan"></tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6"></div>
+                                            <div class="col-md-6">
+                                                <div class="form-group row">
+                                                    <label class="col-sm-4 col-form-label" for="totaldetailbahan" style="font-weight: bold;">Total</label>
+                                                    <div class="col-sm-8 form-group">
+                                                        <input class="form-control" type="text" name="totaldetailbahan" id="totaldetailbahan" placeholder="Total" style="text-align:right; font-weight: bold;" readonly="" required="">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group row">
+                                                    <div class="modal-body pre-scrollable" style="height: 250px; border: 1px solid; border-color: #DCDCDC;">
+                                                        <div class="table-responsive">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" style="color: black; font-weight: bold;">HISTORY PEMBEBANAN BAHAN</h5>
+                                                            </div>
+                                                            <table class="table table-bordered table-striped" id="detailpembebananbahan">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>NO PEMBEBANAN</th>
+                                                                        <th>TGL PEMBEBANAN</th>
+                                                                        <th>Kode BAHAN</th>
+                                                                        <th>NAMA BAHAN</th>
+                                                                        <th>QTY</th>
+                                                                        <th>HARGA SATUAN</th>
+                                                                        <th>DISC %</th>
+                                                                        <th>DISCOUNT Rp</th>
+                                                                        <th>SUBTOTAL</th>
+                                                                        <th>STATUS BATAL</th>
+                                                                        <th>USER</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody id="detaildatapembebananbahan"></tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6"></div>
+                                            <div class="col-md-6">
+                                                <div class="form-group row">
+                                                    <label class="col-sm-4 col-form-label" for="totaldetailpembebananbahan" style="font-weight: bold;">Total</label>
+                                                    <div class="col-sm-8 form-group">
+                                                        <input class="form-control" type="text" name="totaldetailpembebananbahan" id="totaldetailpembebananbahan" placeholder="Total" style="text-align:right; font-weight: bold;" readonly="" required="">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div> -->
+
+                                <!-- ORDER PEKERJAAN LUAR DETAIL -->
+                                <div class="tab-pane fade" id="opl" role="tabpanel" aria-labelledby="opl-basic-tab">
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group row">
+                                                    <div class="modal-body pre-scrollable" style="height: 250px; border: 1px solid; border-color: #DCDCDC;">
+                                                        <div class="table-responsive">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" style="color: black; font-weight: bold;">DETAIL ORDER PEKERJAAN LUAR</h5>
+                                                            </div>
+                                                            <table class="table table-bordered table-striped" id="detailopl">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>KODE OPL</th>
+                                                                        <th>NAMA OPL</th>
+                                                                        <th>QTY</th>
+                                                                        <th>HARGA SATUAN</th>
+                                                                        <th>DISC %</th>
+                                                                        <th>DISCOUNT Rp</th>
+                                                                        <th>SUBTOTAL</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody id="detaildataopl"></tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6"></div>
+                                            <div class="col-md-6">
+                                                <div class="form-group row">
+                                                    <label class="col-sm-4 col-form-label" for="totaldetailopl" style="font-weight: bold;">Total</label>
+                                                    <div class="col-sm-8 form-group">
+                                                        <input class="form-control" type="text" name="totaldetailopl" id="totaldetailopl" placeholder="Total" style="text-align:right; font-weight: bold;" readonly="" required="">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group row">
+                                                    <div class="modal-body pre-scrollable" style="height: 250px; border: 1px solid; border-color: #DCDCDC;">
+                                                        <div class="table-responsive">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" style="color: black; font-weight: bold;">HISTORY ORDER PEKERJAAN LUAR</h5>
+                                                            </div>
+                                                            <table class="table table-bordered table-striped" id="detailhistoryopl">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>NO ORDER</th>
+                                                                        <th>TGL ORDER</th>
+                                                                        <th>KODE OPL</th>
+                                                                        <th>NAMA OPL</th>
+                                                                        <th>QTY</th>
+                                                                        <th>HARGA SATUAN</th>
+                                                                        <th>DISC %</th>
+                                                                        <th>DISCOUNT Rp</th>
+                                                                        <th>SUBTOTAL</th>
+                                                                        <th>STATUS BATAL</th>
+                                                                        <th>USER</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody id="detaildatahistoryopl"></tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6"></div>
+                                            <div class="col-md-6">
+                                                <div class="form-group row">
+                                                    <label class="col-sm-4 col-form-label" for="totaldetailhistoryopl" style="font-weight: bold;">Total</label>
+                                                    <div class="col-sm-8 form-group">
+                                                        <input class="form-control" type="text" name="totaldetailhistoryopl" id="totaldetailhistoryopl" placeholder="Total" style="text-align:right; font-weight: bold;" readonly="" required="">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- PENERIMAAN KASIR DETAIL -->
+                                <div class="tab-pane fade" id="kasir" role="tabpanel" aria-labelledby="kasir-basic-tab">
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group row">
+                                                    <div class="modal-body pre-scrollable" style="height: 250px; border: 1px solid; border-color: #DCDCDC;">
+                                                        <div class="table-responsive">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" style="color: black; font-weight: bold;">DETAIL PENERIMAAN KASIR</h5>
+                                                            </div>
+                                                            <table class="table table-bordered table-striped" id="detailpenerimaankasir">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>JENIS TRANSAKSI</th>
+                                                                        <th>NO PENERIMAAN</th>
+                                                                        <th>TGL PENERIMAAN</th>
+                                                                        <th>NILAI PENERIMAAN</th>
+                                                                        <th>MASUK KE ACCOUNT</th>
+                                                                        <th>NILAI PENGHAPUSAN</th>
+                                                                        <th>ACCOUNT PENGHAPUSAN</th>
+                                                                        <th>JENIS PENERIMAAN</th>
+                                                                        <th>KETERANGAN</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody id="detaildatapenerimaankasir"></tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6"></div>
+                                            <div class="col-md-6">
+                                                <div class="form-group row">
+                                                    <label class="col-sm-4 col-form-label" for="totaldetailpenerimaankasir" style="font-weight: bold;">Total</label>
+                                                    <div class="col-sm-8 form-group">
+                                                        <input class="form-control" type="text" name="totaldetailpenerimaankasir" id="totaldetailpenerimaankasir" placeholder="Total" style="text-align:right; font-weight: bold;" readonly="" required="">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group row">
+                                                    <div class="modal-body pre-scrollable" style="height: 250px; border: 1px solid; border-color: #DCDCDC;">
+                                                        <div class="table-responsive">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" style="color: black; font-weight: bold;">HISTORY PEMBATALAN PENERIMAAN KASIR</h5>
+                                                            </div>
+                                                            <table class="table table-bordered table-striped" id="detailhistorypembatalanpenerimaankasir">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>JENIS TRANSAKSI</th>
+                                                                        <th>NO PENERIMAAN</th>
+                                                                        <th>TGL PENERIMAAN</th>
+                                                                        <th>NILAI PENERIMAAN</th>
+                                                                        <th>MASUK KE ACCOUNT</th>
+                                                                        <th>NILAI PENGHAPUSAN</th>
+                                                                        <th>ACCOUNT PENGHAPUSAN</th>
+                                                                        <th>JENIS PENERIMAAN</th>
+                                                                        <th>KETERANGAN</th>
+                                                                        <th>Status</th>
+                                                                        <th>Tgl Batal</th>
+                                                                        <th>User Batal</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody id="detaildatahistorypembatalanpenerimaankasir"></tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6"></div>
+                                            <div class="col-md-6">
+                                                <div class="form-group row">
+                                                    <label class="col-sm-4 col-form-label" for="totaldetailpembatalanpenerimaankasir" style="font-weight: bold;">Total</label>
+                                                    <div class="col-sm-8 form-group">
+                                                        <input class="form-control" type="text" name="totaldetailpembatalanpenerimaankasir" id="totaldetailpembatalanpenerimaankasir" placeholder="Total" style="text-align:right; font-weight: bold;" readonly="" required="">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- HISTORY WO DETAIL -->
+                                <div class="tab-pane fade" id="history" role="tabpanel" aria-labelledby="history-basic-tab">
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group row" id="nopol">
+                                                    <label class="col-sm-4 col-form-label" for="nopolisihistorywo">No Polisi</label>
+                                                    <div class="col-sm-8 form-group">
+                                                        <input class="form-control" type="text" name="nopolisihistorywo" id="nopolisihistorywo" placeholder="No Polisi" readonly="" required="">
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row" id="noorder">
+                                                    <label class="col-sm-4 col-form-label" for="noorderhistorywo">No Order</label>
+                                                    <div class="col-sm-8 form-group">
+                                                        <input class="form-control" type="text" name="noorderhistorywo" id="noorderhistorywo" placeholder="No Order" readonly="" required="">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6" id="norang">
+                                                <div class="form-group row">
+                                                    <label class="col-sm-4 col-form-label" for="norangkahistorywo">No Rangka</label>
+                                                    <div class="col-sm-8 form-group">
+                                                        <input class="form-control" type="text" name="norangkahistorywo" id="norangkahistorywo" placeholder="No Rangka" readonly="" required="">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="form-group row">
+                                                    <div class="modal-body pre-scrollable" style="height: 500px; border: 1px solid; border-color: #DCDCDC;">
+                                                        <div class="table-responsive">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" style="color: black; font-weight: bold;">HISTORY BATAL</h5>
+                                                            </div>
+                                                            <table class="table table-bordered table-striped" id="detailhistorybatal">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>NO FAKTUR</th>
+                                                                        <th>TGL FAKTUR</th>
+                                                                        <th>NO WO</th>
+                                                                        <th>NO POLISI</th>
+                                                                        <th>NAMA</th>
+                                                                        <th>TOTAL</th>
+                                                                        <th>ALASAN BATAL</th>
+                                                                        <th>TGL BATAL</th>
+                                                                        <th>USER BATAL</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody id="detaildatahistorybatal"></tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group row">
+                                                    <div class="modal-body pre-scrollable" style="height: 250px; border: 1px solid; border-color: #DCDCDC;">
+                                                        <div class="table-responsive">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" style="color: black; font-weight: bold;">HISTORY RETUR</h5>
+                                                            </div>
+                                                            <table class="table table-bordered table-striped" id="detailhistoryretur">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>NO WO</th>
+                                                                        <th>TGL WO</th>
+                                                                        <th>NO FAKTUR</th>
+                                                                        <th>TGL FAKTUR</th>
+                                                                        <th>NO POLISI</th>
+                                                                        <th>NO RANGKA</th>
+                                                                        <th>NO FAKTUR PAJAK</th>
+                                                                        <th>TLG FAKTUR PAJAK</th>
+                                                                        <th>NILAI FAKTUR</th>
+                                                                        <th>ALASAN BATAL</th>
+                                                                        <th>TGL BATAL</th>
+                                                                        <th>USER BATAL</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody id="detaildatahistoryretur"></tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div> -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
